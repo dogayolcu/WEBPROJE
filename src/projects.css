@@ -1,0 +1,64 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.project-container {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+
+.project-card {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.project-card:hover {
+    transform: scale(1.1);
+}
+
+.project-details {
+    width: 300px;
+    margin: 0 auto;
+}
+
+.project-details ul {
+    list-style-type: none;
+    padding: 0;
+}
+.project-column ul {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    min-height: 50px;
+    border: 1px solid #ccc;
+}
+
+.project-column ul li {
+    padding: 10px;
+    background-color: #f1f1f1;
+    margin-bottom: 5px;
+    cursor: move;
+}
+button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
