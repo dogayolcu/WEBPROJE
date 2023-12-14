@@ -18,7 +18,7 @@ function App() {
         <Route path="/create-project" element={<CreateProject />} />
         <Route path="/add-project-members" element={<AddProjectMember />} />
         <Route path="/project-details" element={<ProjectDetails />} />
-        <Route path="./componets/register" element={<Register />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
     </Router>
   );

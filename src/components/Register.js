@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const CreateAccount = () => {
+const Register = () => {
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
   const [email, setEmail] = useState('');
@@ -50,4 +50,4 @@ const CreateAccount = () => {
   );
 };
 
-export default CreateAccount;
+export default Register;
