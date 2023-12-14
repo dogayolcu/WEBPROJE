@@ -1,55 +1,26 @@
-import React, { useState } from 'react';
-import ProjectList from './ProjectList';
-import ProjectColumn from './ProjectColumn';
-import ProjectDetails from './ProjectDetails';
-import Buttons from './Buttons';
-import './projects.css';
+// App.js
+
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import CreateProject from './components/CreateProject';
+import AddProjectMember from './components/AddProjectMember';
+import Kanban from './components/kanban';
+import Login from './components/Login';
+import ProjectDetails from './components/ProjectDetails';
+import Register from './components/Register';
 
 function App() {
-  const [cards, setCards] = useState([
-    { id: 'card-1', text: 'Project 1', column: 'TO DO' },
-    { id: 'card-2', text: 'Project 2', column: 'TO DO' },
-    // Diğer kartlar eklenebilir
-  ]);
-
-  const onDragStart = (e, id) => {
-    e.dataTransfer.setData("id", id);
-  };
-
-  const onDragOver = (e) => {
-    e.preventDefault();
-  };
-
-  const onDrop = (e, newColumn) => {
-    const id = e.dataTransfer.getData("id");
-    const newCards = cards.map(card => {
-      if (card.id === id) {
-        card.column = newColumn;
-      }
-      return card;
-    });
-    setCards(newCards);
-  };
-
   return (
-    <div>
-      <h1>MyProject</h1>
-      <div className="project-container">
-        <ProjectList />
-        {["TO DO", "IN PROGRESS", "DONE"].map(column => (
-          <ProjectColumn
-            key={column}
-            title={column}
-            cards={cards.filter(card => card.column === column)}
-            onDragOver={onDragOver}
-            onDrop={onDrop}
-            onDragStart={onDragStart}
-          />
-        ))}
-      </div>
-      <ProjectDetails />
-      <Buttons />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Login />} /> Login sayfasını ana sayfa olarak ayarlayın 
+        <Route path="/kanban" element={<Kanban />} />
+        <Route path="/create-project" element={<CreateProject />} />
+        <Route path="/add-project-members" element={<AddProjectMember />} />
+        <Route path="/project-details" element={<ProjectDetails />} />
+        <Route path="./componets/register" element={<Register />} />
+      </Routes>
+    </Router>
   );
 }
 
