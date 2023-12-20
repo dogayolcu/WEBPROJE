@@ -1,36 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 function ProjectList() {
-  const [projects, setProjects] = useState([]);
+    const [projects, setProjects] = useState([]);
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const response = await axios.get('http://localhost:8080/api/projects/userProjects');
-        setProjects(response.data);
-      } catch (error) {
-        console.error("Projeler yüklenirken bir hata oluştu", error);
-      }
-    };
+    useEffect(() => {
+        const fetchProjects = async () => {
+            try {
+                const response = await axios.get("http://localhost:8080/api/v1/projects");
+                setProjects(response.data);
+            } catch (error) {
+                console.error("Projeler yüklenirken hata oluştu:", error);
+            }
+        };
 
-    fetchProjects();
-  }, []);
+        fetchProjects();
+    }, []);
 
-  return (
-    <div className="project-list">
-      <h2>Project List</h2>
-      <ul id="project-list">
-        <select id="project" name="project">
-          {projects.map((project, index) => (
-            <option key={index} value={project.id}>
-              {project.name}
-            </option>
-          ))}
-        </select>
-      </ul>
-    </div>
-  );
+    return (
+        <div>
+            <h2>Projects</h2>
+            <ul>
+                {projects.map(project => (
+                    <li key={project.id}>
+                        <Link to={`/projects/${project.id}`}>
+                            <h3>{project.name}</h3>
+                            <p>{project.description}</p>
+                            {/* Diğer proje bilgileri */}
+                        </Link>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
 }
 
 export default ProjectList;
