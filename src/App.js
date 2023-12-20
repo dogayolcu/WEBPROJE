@@ -9,11 +9,13 @@ import Login from './components/Login';
 import ProjectDetails from './components/ProjectDetails';
 import Register from './components/Register';
 
+
 function App() {
   return (
+    <div className="App">
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} /> Login sayfasını ana sayfa olarak ayarlayın 
+      <Route path="/" element={<Login />} />Login sayfasını ana sayfa olarak ayarlayın
         <Route path="/kanban" element={<Kanban />} />
         <Route path="/create-project" element={<CreateProject />} />
         <Route path="/add-project-members" element={<AddProjectMember />} />
@@ -21,7 +23,9 @@ function App() {
         <Route path="/register" element={<Register />} />
       </Routes>
     </Router>
+   </div>
   );
 }
+
 
 export default App;

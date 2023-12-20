@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import axios from 'axios';
+import {useState } from "react";
 
-const Register = () => {
+function Register()
+{
+  const [id, setId] = useState('');
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
   const [email, setEmail] = useState('');
@@ -8,46 +11,112 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Burada hesap oluşturma işlemlerini gerçekleştirebilirsiniz.
-    console.log('Name:', name);
-    console.log('Surname:', surname);
-    console.log('Email:', email);
-    console.log('Username:', username);
-    console.log('Password:', password);
-    console.log('Confirm Password:', confirmPassword);
-  };
+    async function save(event)
+    {
+        event.preventDefault();
+    try
+        {
+         await axios.post("http://localhost:8080/api/v1/users/save",
+        {
 
-  return (
-    
-    <div className="container">
-      <h1>Create an Account</h1>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="name">Name:</label>
-        <input type="text" id="name" name="name" value={name} onChange={(e) => setName(e.target.value)} required />
+            name: name,
+            surname: surname,
+            email: email,
+            username: username,
+            password: password,
 
-        <label htmlFor="surname">Surname:</label>
-        <input type="text" id="surname" name="surname" value={surname} onChange={(e) => setSurname(e.target.value)} required />
 
-        <label htmlFor="email">Email:</label>
-        <input type="email" id="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        });
+          alert("Employee Registation Successfully");
+          setId("");
+          setName("");
+          setSurname("");
+          setEmail("");
+          setUsername("");
+          setPassword("");
+          setConfirmPassword("");
 
-        <label htmlFor="username">Username:</label>
-        <input type="text" id="username" name="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+        
+        }
+    catch(err)
+        {
+          alert("User Registation Failed");
+        }
+   }
+    return (
+        <div class="container mt-4" >
+        <form>
+        <div class="form-group">
+            <label>Name</label>
+            <input type="text" class="form-control" placeholder="Name"
+             value={name}
+            onChange={(event) =>
+              {
+                setName(event.target.value);
+              }}
+            />
+        </div>
 
-        <label htmlFor="password">Password:</label>
-        <input type="password" id="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <div class="form-group">
+            <label>Surname</label>
+            <input type="text" class="form-control" placeholder="Surname"
+             value={surname}
+             onChange={(event) =>
+               {
+                setSurname(event.target.value);
+               }}
+            />
+        </div>
 
-        <label htmlFor="confirm-password">Confirm Password:</label>
-        <input type="password" id="confirm-password" name="confirm-password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+        <div class="form-group">
+            <label>Email</label>
+            <input type="text" class="form-control" placeholder="Email"
+            value={email}
+            onChange={(event) =>
+              {
+                setEmail(event.target.value);
+              }}
+           />
+        </div>
 
-        <button type="submit">Create Account</button>
-      </form>
-      {/* Eğer sunucu ile ilgili bir işlem yapacaksanız, registerServer.js dosyasını kullanabilirsiniz. */}
-      {/* <script src="registerServer.js"></script> */}
-    </div>
-  );
-};
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" class="form-control" placeholder="Username"
+            value={username}
+            onChange={(event) =>
+              {
+                setUsername(event.target.value);
+              }}
+           />
+        </div>
 
-export default Register;
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" class="form-control" placeholder="Password"
+            value={password}
+            onChange={(event) =>
+              {
+                setPassword(event.target.value);
+              }}
+           />
+        </div>
+
+        <div class="form-group">
+            <label>Password Again</label>
+            <input type="password" class="form-control" placeholder="Confirm Password"
+            value={confirmPassword}
+            onChange={(event) =>
+              {
+                setConfirmPassword(event.target.value);
+              }}
+           />
+        </div>
+        
+        <button class="btn btn-primary mt-4"  onClick={save}>Register</button>
+        </form>
+
+      </div>
+    );
+  }
+
+  export default Register;
