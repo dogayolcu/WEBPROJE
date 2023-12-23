@@ -7,7 +7,6 @@ function UserProjects() {
   const { user } = useContext(UserContext);
 
   useEffect(() => {
-    // userId'nin geçerli olduğundan emin olun
     if (user && user.id) {
       axios.get(`http://localhost:8080/api/v1/projects/user/${user.id}/projects`)
         .then(response => setProjects(response.data))

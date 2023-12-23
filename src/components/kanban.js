@@ -6,22 +6,18 @@ import { UserContext } from './UserContext';
 import './styles/App.css';
 
 const Kanban = () => {
+  const [projects, setProjects] = useState([]);
+  const [selectedProjectId, setSelectedProjectId] = useState('');
   const [cards, setCards] = useState([]);
-  const [newProject, setNewProject] = useState('');
+  const [newTask, setNewTask] = useState('');
   const { user } = useContext(UserContext);
 
+  // Projeleri yükleme
   useEffect(() => {
-    // Kullanıcının projelerini yüklemek için API isteği
-    if (user && user.id) { // user ve user.id'nin kontrolü
+    if (user && user.id) {
       axios.get(`http://localhost:8080/api/v1/projects/user/${user.id}/projects`)
         .then(response => {
-          // Gelen projeleri işleyerek cards'a ekleyin
-          const userProjects = response.data.map(project => ({
-            id: `project-${project.id}`,
-            text: project.name,
-            column: 'TO DO' // Varsayılan olarak her kartı 'TO DO' sütununa yerleştirin
-          }));
-          setCards(userProjects);
+          setProjects(response.data);
         })
         .catch(error => {
           console.error("Error loading projects:", error);
@@ -29,9 +25,23 @@ const Kanban = () => {
     }
   }, [user]);
 
+  // Seçilen projenin görevlerini yükleme
+  useEffect(() => {
+    if (selectedProjectId) {
+      axios.get(`http://localhost:8080/api/v1/tasks/project/${selectedProjectId}`)
+        .then(response => {
+          setCards(response.data);
+        })
+        .catch(error => {
+          console.error("Error loading tasks:", error);
+        });
+    }
+  }, [selectedProjectId]);
+
   const onDragStart = (e, id) => {
     e.dataTransfer.setData('id', id);
   };
+
 
   const onDragOver = (e) => {
     e.preventDefault();
@@ -48,20 +58,29 @@ const Kanban = () => {
     setCards(newCards);
   };
 
-  const handleAddProject = () => {
-    if (newProject.trim() !== '') {
-      const newCard = {
-        id: `card-${cards.length + 1}`,
-        text: newProject,
-        column: 'TO DO',
-      };
-      setCards([...cards, newCard]);
-      setNewProject('');
+  const handleAddTask = () => {
+    if (newTask.trim() !== '') {
+      // API'ye yeni görev ekleme isteği yapılır
+      // Örnek olarak burada cards state'ine direkt ekleniyor
+      setCards([...cards, { id: Date.now(), text: newTask, column: 'TO DO' }]);
+      setNewTask('');
     }
   };
 
   return (
-    <div>
+    <div className="kanban-board">
+      <div className="project-dropdown">
+        <label htmlFor="project-select">Choose a project:</label>
+        <select id="project-select" onChange={(e) => setSelectedProjectId(e.target.value)}>
+          <option value="">Select a project</option>
+          {projects.map((project) => (
+            <option key={project.id} value={project.id}>
+              {project.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <div className="project-container">
         {['TO DO', 'IN PROGRESS', 'DONE'].map((column) => (
           <ProjectColumn
@@ -73,18 +92,18 @@ const Kanban = () => {
             onDragStart={onDragStart}
           />
         ))}
+
+        <div className="add-task">
+          <input
+            type="text"
+            value={newTask}
+            onChange={(e) => setNewTask(e.target.value)}
+            placeholder="Enter new task"
+          />
+          <button onClick={handleAddTask}>Add Task</button>
+        </div>
       </div>
 
-      <div>
-        <input
-          type="text"
-          style={{ width: '20%', height: '30px', marginLeft: '20px' }}
-          value={newProject}
-          onChange={(e) => setNewProject(e.target.value)}
-          placeholder="Enter new task"
-        />
-        <button onClick={handleAddProject}>Add Task</button>
-      </div>
       <Buttons />
     </div>
   );

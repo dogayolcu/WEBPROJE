@@ -1,11 +1,10 @@
-/* Butonları stilize et */
 .button-container {
-    margin-top: 20px;
-    display: flex;
-    justify-content: flex-end; /* Butonları sağ üste hizala */
-    align-items: center; /* Dikeyde ortala */
-    margin-top: 20px;
-  }
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 20px; /* Tekrarlanan margin-top değerini sildim */
+}
+
    /*tüm butonlar*/
    button {
     margin-right: 20px;
@@ -24,4 +23,3 @@
   button:hover {
     background-color: #218838; /* Koyu yeşil tonu */
   }
-  

@@ -1,15 +1,20 @@
 .project-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start; /* veya space-around */
   margin: 20px;
 }
 
 .project-column {
-  width: 20%;
+  width: 25%; /* Dört sütunu eşit genişlikte yapar */
+  margin-right: 10px; /* Sütunlar arası boşluk ekler */
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 35px;
   background-color: #f8f9fa;
+}
+
+.project-column:last-child {
+  margin-right: 0; /* Son sütun için sağdaki margini sıfırlar */
 }
 
 .project-column-title {
@@ -25,4 +30,9 @@
   border-radius: 35px;
   background-color: #f8f9fa;
   cursor: grab;
+}
+.add-task-container {
+  position: fixed; /* Sabit pozisyon */
+  bottom: 10px; /* Alt kısmından 10px yukarıda */
+  left: 10px; /* Sol kısmından 10px sağda */
 }
