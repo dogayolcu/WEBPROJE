@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import CreateProject from './components/CreateProject';
 import AddProjectMember from './components/AddProjectMember';
-import Kanban from './components/Kanban'; // Dosya adı büyük harfle başlamalı
+import Kanban from './components/kanban'
 import Login from './components/Login';
 import ProjectDetails from './components/ProjectDetails';
 import Register from './components/Register';
@@ -10,7 +10,7 @@ import { UserProvider } from './components/UserContext';
 
 function App() {
   return (
-    <UserProvider> {/* UserProvider buraya taşındı */}
+    <UserProvider>
       <div className="App">
         <Router>
           <Routes>

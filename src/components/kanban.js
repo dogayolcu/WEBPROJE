@@ -12,7 +12,7 @@ const Kanban = () => {
   const [newTask, setNewTask] = useState('');
   const { user } = useContext(UserContext);
 
-  // Projeleri yükleme
+
   useEffect(() => {
     if (user && user.id) {
       axios.get(`http://localhost:8080/api/v1/projects/user/${user.id}/projects`)
@@ -25,7 +25,7 @@ const Kanban = () => {
     }
   }, [user]);
 
-  // Seçilen projenin görevlerini yükleme
+
   useEffect(() => {
     if (selectedProjectId) {
       axios.get(`http://localhost:8080/api/v1/tasks/project/${selectedProjectId}`)
@@ -60,8 +60,6 @@ const Kanban = () => {
 
   const handleAddTask = () => {
     if (newTask.trim() !== '') {
-      // API'ye yeni görev ekleme isteği yapılır
-      // Örnek olarak burada cards state'ine direkt ekleniyor
       setCards([...cards, { id: Date.now(), text: newTask, column: 'TO DO' }]);
       setNewTask('');
     }
