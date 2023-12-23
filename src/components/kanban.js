@@ -1,18 +1,33 @@
-// Kanban.js
-import React, { useState } from 'react';
-import ProjectList from './ProjectList';
+import React, { useState, useEffect, useContext } from 'react';
+import axios from 'axios';
 import ProjectColumn from './ProjectColumn';
 import Buttons from './Buttons';
+import { UserContext } from './UserContext';
 import './styles/App.css';
 
-const Kanban= () => {
-  const [cards, setCards] = useState([
-    { id: 'card-1', text: 'Project 1', column: 'TO DO' },
-    { id: 'card-2', text: 'Project 2', column: 'TO DO' },
-    // Diğer kartlar eklenebilir
-  ]);
-
+const Kanban = () => {
+  const [cards, setCards] = useState([]);
   const [newProject, setNewProject] = useState('');
+  const { user } = useContext(UserContext);
+
+  useEffect(() => {
+    // Kullanıcının projelerini yüklemek için API isteği
+    if (user && user.id) { // user ve user.id'nin kontrolü
+      axios.get(`http://localhost:8080/api/v1/projects/user/${user.id}/projects`)
+        .then(response => {
+          // Gelen projeleri işleyerek cards'a ekleyin
+          const userProjects = response.data.map(project => ({
+            id: `project-${project.id}`,
+            text: project.name,
+            column: 'TO DO' // Varsayılan olarak her kartı 'TO DO' sütununa yerleştirin
+          }));
+          setCards(userProjects);
+        })
+        .catch(error => {
+          console.error("Error loading projects:", error);
+        });
+    }
+  }, [user]);
 
   const onDragStart = (e, id) => {
     e.dataTransfer.setData('id', id);
@@ -48,7 +63,6 @@ const Kanban= () => {
   return (
     <div>
       <div className="project-container">
-        <ProjectList />
         {['TO DO', 'IN PROGRESS', 'DONE'].map((column) => (
           <ProjectColumn
             key={column}
@@ -57,16 +71,14 @@ const Kanban= () => {
             onDragOver={onDragOver}
             onDrop={(e) => onDrop(e, column)}
             onDragStart={onDragStart}
-            onAddProject={handleAddProject}
           />
         ))}
       </div>
 
-      {/* Yeni proje eklemek için input ve buton */}
       <div>
         <input
           type="text"
-          style={{ width: '20%', height: '30px',marginLeft: '20px' }}
+          style={{ width: '20%', height: '30px', marginLeft: '20px' }}
           value={newProject}
           onChange={(e) => setNewProject(e.target.value)}
           placeholder="Enter new task"
@@ -75,7 +87,6 @@ const Kanban= () => {
       </div>
       <Buttons />
     </div>
-    
   );
 }
 

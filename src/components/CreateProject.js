@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { UserContext } from './UserContext'; // UserContext'i içe aktarın
 
 function CreateProjectForm() {
     const [projectData, setProjectData] = useState({
@@ -9,19 +10,19 @@ function CreateProjectForm() {
         startDate: '',
         endDate: '',
         status: '',
-        userIds: [] // Projeye eklenecek kullanıcıların ID'leri
+        userIds: []
     });
-    const [selectedUsers, setSelectedUsers] = useState([]); // Seçilen kullanıcılar için state
-    const [users, setUsers] = useState([]); // Tüm kullanıcılar için state
-    const [error, setError] = useState(''); // Hata mesajları için state
+    const [selectedUsers, setSelectedUsers] = useState([]);
+    const [users, setUsers] = useState([]);
+    const [error, setError] = useState('');
     const navigate = useNavigate();
+    const { user } = useContext(UserContext); // UserContext kullanarak mevcut kullanıcıyı alın
 
-    // Kullanıcı listesini API'den almak için useEffect hook'u
     useEffect(() => {
         const fetchUsers = async () => {
             try {
                 const response = await axios.get("http://localhost:8080/api/v1/users");
-                setUsers(response.data);
+                setUsers(response.data.filter(u => u.id !== user.id)); // Kendinizi listeden çıkarın
             } catch (error) {
                 console.error("Kullanıcılar yüklenirken hata oluştu:", error);
                 setError("Kullanıcılar yüklenirken bir hata oluştu.");
@@ -29,14 +30,12 @@ function CreateProjectForm() {
         };
     
         fetchUsers();
-    }, []);
+    }, [user.id]); // user.id'yi bağımlılık listesine ekleyin
 
-    // Form alanlarında meydana gelen değişiklikleri işleyen fonksiyon
     const handleChange = (e) => {
         setProjectData({ ...projectData, [e.target.name]: e.target.value });
     };
 
-    // Kullanıcı seçimlerini işleyen fonksiyon
     const handleUserChange = (e) => {
         const selectedOptions = Array.from(e.target.options)
             .filter(option => option.selected)
@@ -44,12 +43,11 @@ function CreateProjectForm() {
         setSelectedUsers(selectedOptions);
     };
 
-    // Proje oluşturma isteğini gönderen fonksiyon
     const createProject = async () => {
         try {
             const projectRequestData = {
                 ...projectData,
-                userIds: selectedUsers
+                userIds: [...selectedUsers, user.id] // Kendinizi projeye ekleyin
             };
             await axios.post("http://localhost:8080/api/v1/projects/save", projectRequestData);
             navigate('/kanban');
@@ -58,7 +56,6 @@ function CreateProjectForm() {
         }
     };
 
-    // Form gönderildiğinde çalışacak fonksiyon
     const handleSubmit = (e) => {
         e.preventDefault();
         setError('');
@@ -67,7 +64,6 @@ function CreateProjectForm() {
 
     return (
         <form onSubmit={handleSubmit}>
-            {/* Proje adı input alanı */}
             <div>
                 <label>Name:</label>
                 <input 
@@ -79,7 +75,6 @@ function CreateProjectForm() {
                 />
             </div>
 
-            {/* Proje açıklaması input alanı */}
             <div>
                 <label>Description:</label>
                 <textarea
@@ -90,7 +85,6 @@ function CreateProjectForm() {
                 />
             </div>
 
-            {/* Proje başlangıç tarihi input alanı */}
             <div>
                 <label>Start Date:</label>
                 <input 
@@ -102,7 +96,6 @@ function CreateProjectForm() {
                 />
             </div>
 
-            {/* Proje bitiş tarihi input alanı */}
             <div>
                 <label>End Date:</label>
                 <input 
@@ -114,7 +107,6 @@ function CreateProjectForm() {
                 />
             </div>
 
-            {/* Proje durumu seçim alanı */}
             <div>
                 <label>Status:</label>
                 <select 
@@ -129,17 +121,21 @@ function CreateProjectForm() {
                 </select>
             </div>
 
-            {/* Kullanıcı seçimi için çoklu seçim listesi */}
             <div>
                 <label>Users:</label>
-                <select multiple name="userIds" onChange={handleUserChange} value={selectedUsers}>
+                <select 
+                    multiple 
+                    name="userIds" 
+                    onChange={handleUserChange} 
+                    value={selectedUsers}
+                    size={5} // Liste boyutunu ayarlayarak daha fazla kullanıcıyı görebilirsiniz
+                >
                     {users.map(user => (
                         <option key={user.id} value={user.id}>{user.name}</option>
                     ))}
                 </select>
             </div>
 
-            {/* Form gönderme butonu */}
             <button type="submit">Create Project</button>
             {error && <div style={{ color: 'red' }}>{error}</div>}
         </form>
