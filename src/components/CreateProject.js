@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from './UserContext';
+import './styles/AddProject.css';
 
 function CreateProjectForm() {
     const [projectData, setProjectData] = useState({
@@ -70,96 +71,95 @@ function CreateProjectForm() {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <div>
-                <label htmlFor="name">Name:</label>
-                <input 
-                    type="text" 
-                    id="name"
-                    name="name"
-                    value={projectData.name} 
-                    onChange={handleChange} 
-                    required 
-                />
-            </div>
+        <div className="container">
+            <form onSubmit={handleSubmit}>
+                <div>
+                    <label htmlFor="name">Name:</label>
+                    <input 
+                        type="text" 
+                        id="name"
+                        name="name"
+                        value={projectData.name} 
+                        onChange={handleChange} 
+                        required 
+                    />
+                </div>
 
-            <div>
-                <label htmlFor="description">Description:</label>
-                <textarea
-                    id="description"
-                    name="description"
-                    value={projectData.description} 
-                    onChange={handleChange} 
-                    required
-                />
-            </div>
+                <div>
+                    <label htmlFor="description">Description:</label>
+                    <textarea
+                        id="description"
+                        name="description"
+                        value={projectData.description} 
+                        onChange={handleChange} 
+                        required
+                    />
+                </div>
 
-            <div>
-                <label htmlFor="startDate">Start Date:</label>
-                <input 
-                    type="date" 
-                    id="startDate"
-                    name="startDate"
-                    value={projectData.startDate} 
-                    onChange={handleChange} 
-                    required 
-                />
-            </div>
+                <div>
+                    <label htmlFor="startDate">Start Date:</label>
+                    <input 
+                        type="date" 
+                        id="startDate"
+                        name="startDate"
+                        value={projectData.startDate} 
+                        onChange={handleChange} 
+                        required 
+                    />
+                </div>
 
-            <div>
-                <label htmlFor="endDate">End Date:</label>
-                <input 
-                    type="date" 
-                    id="endDate"
-                    name="endDate"
-                    value={projectData.endDate}
-                    onChange={handleChange}
-                    required 
-                />
-            </div>
+                <div>
+                    <label htmlFor="endDate">End Date:</label>
+                    <input 
+                        type="date" 
+                        id="endDate"
+                        name="endDate"
+                        value={projectData.endDate}
+                        onChange={handleChange}
+                        required 
+                    />
+                </div>
 
-            <div>
-                <label htmlFor="status">Status:</label>
-                <select 
-                    id="status"
-                    name="status"
-                    value={projectData.status} 
-                    onChange={handleChange} 
-                    required
-                >
-                    <option value="">Select Status</option>
-                    <option value="Planned">Planned</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Completed">Completed</option>
-                </select>
-            </div>
+                <div>
+                    <label htmlFor="status">Status:</label>
+                    <select 
+                        id="status"
+                        name="status"
+                        value={projectData.status} 
+                        onChange={handleChange} 
+                        required
+                    >
+                        <option value="">Select Status</option>
+                        <option value="Planned">Planned</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                </div>
 
-            <div>
-                <label htmlFor="usernameToAdd">Add User by Username:</label>
-                <input
-                    type="text"
-                    id="usernameToAdd"
-                    name="usernameToAdd"
-                    value={usernameToAdd}
-                    onChange={handleUsernameChange}
-                />
-                <button type="button" onClick={addUserToProject}>Add</button>
-                {error && <div style={{ color: 'red' }}>{error}</div>}
-            </div>
-
-            <h3>Added Members</h3>
-            <ul>
-                {addedUsers.map((username, index) => (
-                    <li key={index}>
-                        {username} 
-                        <button onClick={() => removeUserFromList(username)}>Remove</button>
-                    </li>
-                ))}
-            </ul>
-
-            <button type="submit">Create Project</button>
-        </form>
+                <div>
+                    <label htmlFor="usernameToAdd">Add User by Username:</label>
+                    <input
+                        type="text"
+                        id="usernameToAdd"
+                        name="usernameToAdd"
+                        value={usernameToAdd}
+                        onChange={handleUsernameChange}
+                    />
+                    <button type="button" onClick={addUserToProject}>Add</button>
+                    {error && <div style={{ color: 'red' }}>{error}</div>}
+                </div>
+                <ul>
+                    <h3>Added Members</h3>
+                    {addedUsers.map((username, index) => (
+                        <li key={index}>
+                            {username} 
+                            <button onClick={() => removeUserFromList(username)}>Remove</button>
+                        </li>
+                    ))}
+                </ul>
+                <button type="submit">Create Project</button>
+            </form>
+        </div>
     );
 }
-
 export default CreateProjectForm;

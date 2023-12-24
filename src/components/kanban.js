@@ -60,7 +60,12 @@ const Kanban = () => {
 
   const handleAddTask = () => {
     if (newTask.trim() !== '') {
-      setCards([...cards, { id: Date.now(), text: newTask, column: 'TO DO' }]);
+      const newCard = {
+        id: `card-${cards.length + 1}`,
+        text: newTask,
+        column: 'TO DO',
+      };
+      setCards([...cards, newCard]);
       setNewTask('');
     }
   };
@@ -77,6 +82,10 @@ const Kanban = () => {
             </option>
           ))}
         </select>
+      </div>
+
+      <div className="hello">
+      {user && user.name && <h1> Hello, {user.name}! </h1>}
       </div>
 
       <div className="project-container">

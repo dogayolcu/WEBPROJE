@@ -2,7 +2,10 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  margin-top: 20px; /* Tekrarlanan margin-top değerini sildim */
+  margin-top: 20px; 
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
 }
 
    /*tüm butonlar*/
@@ -18,6 +21,7 @@
     margin-left: 10px; /* Doğru syntax */
     margin-top: 20px;
     margin-right: 0
+    
   }
   
   button:hover {

@@ -1,14 +1,15 @@
 .project-container {
   display: flex;
-  justify-content: flex-start; /* veya space-around */
+  justify-content: space-between;
   margin: 20px;
+  border-radius: 35px;
 }
 
 .project-column {
   width: 25%; /* Dört sütunu eşit genişlikte yapar */
   margin-right: 10px; /* Sütunlar arası boşluk ekler */
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #28a745;
   border-radius: 35px;
   background-color: #f8f9fa;
 }
@@ -32,7 +33,56 @@
   cursor: grab;
 }
 .add-task-container {
-  position: fixed; /* Sabit pozisyon */
-  bottom: 10px; /* Alt kısmından 10px yukarıda */
-  left: 10px; /* Sol kısmından 10px sağda */
+  position: fixed;
+  bottom: 10px;
+  left: 10px; 
 }
+
+.project-dropdown {
+  width: 25%;
+  padding: 10px;
+  margin: 20px;
+  box-sizing: border-box;
+  background-color: #f8f9fa;
+  border: 1px solid #28a745;
+  border-radius: 35px;
+  font-size: 1.250rem;
+  appearance: none;
+ }
+ 
+ .project-dropdown option {
+  background-color: #f8f9fa;
+  border: 1px solid #28a745;
+  border-radius: 35px;
+  font-size: 1.05rem;
+  appearance: none;
+ }
+
+ .hello {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: #f8f9fa;
+  border: 1px solid #28a745;
+  border-radius: 25px;
+ }
+ h1 {
+  font-size: 25px;
+ }
+
+ .add-task input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #28a745;
+  border-radius: 25px;
+ }
+ 
+ .add-task button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  cursor: pointer;
+  border-radius: 15px;
+ }

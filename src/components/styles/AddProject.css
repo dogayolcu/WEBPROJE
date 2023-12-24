@@ -2,35 +2,48 @@
     max-width: 500px;
     margin: 20px auto;
     padding: 20px;
-    border: 1px solid #4CAF50;
+    border: 1px solid #28a745;
     border-radius: 40px;
     background-color: #f8f9fa;
+  }
+
+  .buttonAdd {
+    margin-right: 20px;
+    padding: 10px;
+    background-color: #28a745; /* Yeşil tonu */
+    color: #f8f9fa;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    border-radius: 15px;
+    margin-left: 10px; /* Doğru syntax */
+    margin-top: 20px;
+    margin-right: 0
     
   }
-  
-  h2 {
-    margin-bottom: 10px;
-  }
-  
-  label {
+    
+form {
+    width: 200%;
+    max-width: 500px;
+    margin: 0 auto;
+}
+label {
     display: block;
     margin-bottom: 5px;
-  }
-  
-  select,
-  input {
+}
+input,
+textarea,
+select {
     width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
+    padding: 10px;
     box-sizing: border-box;
-  }
-  
-  ul {
-    list-style-type: 5px;
-    padding: 10;
-  }
-  
-  li {
-    margin-bottom: 5px;
-  }
+    border: 1px solid #28a745;
+    border-radius: 25px;
+}
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
   
