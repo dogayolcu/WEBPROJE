@@ -69,6 +69,24 @@ const Kanban = () => {
       setNewTask('');
     }
   };
+  
+    
+
+  const addTask = async () => {
+    const taskData = {
+      name: newTask, // 'newTask' state'i formdan alınan görev adını içeriyor olmalı
+      description: "", // Açıklama için bir form elemanı eklemeniz gerekebilir
+      status: "Todo", // Varsayılan durum, bu projenize göre değişebilir
+      project: { id: selectedProjectId } // Seçilen projenin ID'si
+    };
+
+    try {
+      const response = await axios.post('http://localhost:8080/api/v1/tasks', taskData);
+      console.log("Task added:", response.data);
+    } catch (error) {
+      console.error("Error adding task:", error);
+    }
+  };
 
   return (
     <div className="kanban-board">
@@ -107,7 +125,7 @@ const Kanban = () => {
             onChange={(e) => setNewTask(e.target.value)}
             placeholder="Enter new task"
           />
-          <button onClick={handleAddTask}>Add Task</button>
+          <button onClick={() => { addTask(); handleAddTask(); }}>Add Task</button>
         </div>
       </div>
 
@@ -115,5 +133,6 @@ const Kanban = () => {
     </div>
   );
 }
+
 
 export default Kanban;
