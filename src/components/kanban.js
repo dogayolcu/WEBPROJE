@@ -12,8 +12,8 @@ const Kanban = () => {
   const [newTask, setNewTask] = useState('');
   const { user } = useContext(UserContext);
 
-
   useEffect(() => {
+    // Proje bilgilerini yükle
     if (user && user.id) {
       axios.get(`http://localhost:8080/api/v1/projects/user/${user.id}/projects`)
         .then(response => {
@@ -25,8 +25,8 @@ const Kanban = () => {
     }
   }, [user]);
 
-
-  useEffect(() => {
+  /*useEffect(() => {
+    // Seçili projeye ait task'ları yükle
     if (selectedProjectId) {
       axios.get(`http://localhost:8080/api/v1/tasks/project/${selectedProjectId}`)
         .then(response => {
@@ -36,28 +36,33 @@ const Kanban = () => {
           console.error("Error loading tasks:", error);
         });
     }
-  }, [selectedProjectId]);
+  }, [selectedProjectId]);*/
 
-  const onDragStart = (e, id) => {
-    e.dataTransfer.setData('id', id);
+  const addTask = async () => {
+    if (!newTask.trim()) {
+      alert('Task name cannot be empty.');
+      return;
+    }
+  
+    const taskData = {
+      name: newTask,
+      status: "TO DO",
+      projectId: selectedProjectId
+    };
+  
+    try {
+      const response = await axios.post('http://localhost:8080/api/v1/tasks/createTask', taskData, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      handleAddTask();
+      setCards([...cards, response.data]);
+      setNewTask('');
+    } catch (error) {
+      console.error("Error adding task:", error);
+    }
   };
-
-
-  const onDragOver = (e) => {
-    e.preventDefault();
-  };
-
-  const onDrop = (e, newColumn) => {
-    const id = e.dataTransfer.getData('id');
-    const newCards = cards.map((card) => {
-      if (card.id === id) {
-        card.column = newColumn;
-      }
-      return card;
-    });
-    setCards(newCards);
-  };
-
   const handleAddTask = () => {
     if (newTask.trim() !== '') {
       const newCard = {
@@ -70,24 +75,39 @@ const Kanban = () => {
     }
   };
   
-    
-
-  const addTask = async () => {
-    const taskData = {
-      name: newTask, // 'newTask' state'i formdan alınan görev adını içeriyor olmalı
-      description: "", // Açıklama için bir form elemanı eklemeniz gerekebilir
-      status: "Todo", // Varsayılan durum, bu projenize göre değişebilir
-      project: { id: selectedProjectId } // Seçilen projenin ID'si
-    };
-
-    try {
-      const response = await axios.post('http://localhost:8080/api/v1/tasks', taskData);
-      console.log("Task added:", response.data);
-    } catch (error) {
-      console.error("Error adding task:", error);
-    }
+  const onDragStart = (e, id) => {
+    e.dataTransfer.setData('id', id);
   };
 
+  const onDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const onDrop = async (e, newStatus) => {
+    const id = e.dataTransfer.getData('id');
+    let updatedCard;
+    const newCards = cards.map(card => {
+      if (card.id === id) {
+        card.status = newStatus;
+        updatedCard = card;
+      }
+      return card;
+    });
+   
+  
+
+    if (updatedCard) {
+      try {
+        await axios.post(`http://localhost:8080/api/v1/tasks/updateStatus`, {
+          id: updatedCard.id,
+          status: newStatus
+        });
+        setCards(newCards);
+      } catch (error) {
+        console.error("Error updating task status:", error);
+      }
+    }
+  };
   return (
     <div className="kanban-board">
       <div className="project-dropdown">
@@ -103,7 +123,7 @@ const Kanban = () => {
       </div>
 
       <div className="hello">
-      {user && user.name && <h1> Hello, {user.name}! </h1>}
+        {user && user.name && <h1> Hello, {user.name}! </h1>}
       </div>
 
       <div className="project-container">
@@ -125,7 +145,7 @@ const Kanban = () => {
             onChange={(e) => setNewTask(e.target.value)}
             placeholder="Enter new task"
           />
-          <button onClick={() => { addTask(); handleAddTask(); }}>Add Task</button>
+          <button onClick={addTask}>Add Task</button>
         </div>
       </div>
 
@@ -133,6 +153,5 @@ const Kanban = () => {
     </div>
   );
 }
-
 
 export default Kanban;
