@@ -48,10 +48,22 @@ const Kanban = () => {
     }
   }, [selectedProjectId]);
 
-  const handleProjectChange = (e) => {
-    setSelectedProjectId(e.target.value);
+  const handleProjectChange = async (e) => {
+    const projectId = e.target.value;
+    setSelectedProjectId(projectId);
+  
+    if (projectId) {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/v1/tasks/project/${projectId}`);
+        setCards(response.data);
+      } catch (error) {
+        console.error("Error loading tasks for project:", error);
+      }
+    } else {
+      setCards([]); 
+    }
   };
-
+  
   const addTask = async () => {
     if (!newTask.trim()) {
       alert('Task name cannot be empty.');
@@ -66,24 +78,14 @@ const Kanban = () => {
   
     try {
       const response = await axios.post(`http://localhost:8080/api/v1/tasks`, taskData);
-  
-      // Yanıtı kontrol etmek ve doğru veriyi almak için
-      if (response.data && response.data.id && response.data.name) {
-        // Yeni task'ı mevcut task listesine ekle
+      if (response.data && response.data.id) {
         setCards(prevCards => [...prevCards, response.data]);
-      } else {
-        // Yanıt beklenen formatta değilse, bir hata mesajı logla
-        console.error("Invalid task data received:", response.data);
       }
-  
-      // Input alanını temizle
       setNewTask('');
     } catch (error) {
-      // Hata oluşursa konsola yaz
       console.error("Error adding task:", error);
     }
   };
-  
 
   const onDragStart = (e, id) => {
     e.dataTransfer.setData('id', id);
@@ -95,22 +97,34 @@ const Kanban = () => {
 
   const onDrop = async (e, newStatus) => {
     const id = e.dataTransfer.getData('id');
-    let updatedCard;
-    const newCards = cards.map(card => {
-      if (card.id === id) {
-        updatedCard = { ...card, status: newStatus };
-        return updatedCard;
+  
+    let newStatusValue;
+    switch(newStatus) {
+      case 'TO DO':
+        newStatusValue = 'TO_DO';
+        break;
+      case 'IN PROGRESS':
+        newStatusValue = 'IN_PROGRESS';
+        break;
+      case 'DONE':
+        newStatusValue = 'COMPLETED';
+        break;
+      default:
+        return;
+    }
+
+    const updatedCards = cards.map(card => {
+      if (card.id === parseInt(id)) {
+        return { ...card, status: newStatusValue };
       }
       return card;
     });
-
-    if (updatedCard) {
-      try {
-        await axios.patch(`http://localhost:8080/api/v1/tasks/${id}/status`, { status: newStatus });
-        setCards(newCards);
-      } catch (error) {
-        console.error("Error updating task status:", error);
-      }
+    setCards(updatedCards);
+  
+    try {
+      await axios.patch(`http://localhost:8080/api/v1/tasks/${id}/status`, { status: newStatusValue });
+    } catch (error) {
+      console.error("Error updating task status:", error);
     }
   };
 
@@ -136,35 +150,46 @@ const Kanban = () => {
         <select id="project-select" onChange={handleProjectChange}>
           <option value="">Select a project</option>
           {projects.map((project) => (
-            <option key={project.id} value={project.id}>
-              {project.name}
-            </option>
+            <option key={project.id} value={project.id}>{project.name}</option>
           ))}
         </select>
       </div>
 
       <div className="project-container">
-        {['TO DO', 'IN PROGRESS', 'DONE'].map((status) => (
-          <ProjectColumn
-            key={status}
-            title={status}
-            cards={cards.filter((card) => card.status === status)}
-            onDragOver={onDragOver}
-            onDrop={(e) => onDrop(e, status)}
-            onDragStart={onDragStart}
-            onCardClick={openAssignPanel}
-          />
-        ))}
+        <ProjectColumn
+          key="TO DO"
+          title="TO DO"
+          cards={cards.filter(card => card.status === "TO_DO")}
+          onDragOver={onDragOver}
+          onDrop={(e) => onDrop(e, "TO DO")}
+          onDragStart={onDragStart}
+        />
+        <ProjectColumn
+          key="IN PROGRESS"
+          title="IN PROGRESS"
+          cards={cards.filter(card => card.status === "IN_PROGRESS")}
+          onDragOver={onDragOver}
+          onDrop={(e) => onDrop(e, "IN PROGRESS")}
+          onDragStart={onDragStart}
+        />
+        <ProjectColumn
+          key="DONE"
+          title="DONE"
+          cards={cards.filter(card => card.status === "COMPLETED")}
+          onDragOver={onDragOver}
+          onDrop={(e) => onDrop(e, "DONE")}
+          onDragStart={onDragStart}
+        />
+      </div>
 
-        <div className="add-task">
-          <input
-            type="text"
-            value={newTask}
-            onChange={(e) => setNewTask(e.target.value)}
-            placeholder="Enter new task"
-          />
-          <button onClick={addTask}>Add Task</button>
-        </div>
+      <div className="add-task">
+        <input
+          type="text"
+          value={newTask}
+          onChange={(e) => setNewTask(e.target.value)}
+          placeholder="Enter new task"
+        />
+        <button onClick={addTask}>Add Task</button>
       </div>
 
       {showAssignPanel && selectedTask && (

@@ -14,7 +14,7 @@ function ProjectColumn({ title, cards, onDragOver, onDrop, onDragStart }) {
           <ProjectCard
             key={card.id}
             id={card.id}
-            text={card.text}
+            text={card.name} 
             onDragStart={(e) => onDragStart(e, card.id)}
           />
         ))}
