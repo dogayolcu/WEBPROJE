@@ -118,6 +118,10 @@ const Kanban = () => {
           {projects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}
         </select>
       </div>
+      
+      <div className="hello">
+        {user && user.name && <h1> Hello, {user.name}! </h1>}
+      </div>
 
       <div className="project-container">
         <ProjectColumn key="TO DO" title="TO DO" cards={cards.filter(card => card.status === "TO_DO")} onDragOver={onDragOver} onDrop={onDrop} onDragStart={onDragStart} onDoubleClickOnTask={handleDoubleClickOnTask} />
