@@ -1,7 +1,5 @@
-import React from 'react';
-import ProjectCard from './ProjectCard';
-
-function ProjectColumn({ title, cards, onDragOver, onDrop, onDragStart }) {
+// ProjectColumn.js
+function ProjectColumn({ title, cards, onDragOver, onDrop, onDragStart, onDoubleClickOnTask }) {
   return (
     <div
       className="project-column"
@@ -11,16 +9,18 @@ function ProjectColumn({ title, cards, onDragOver, onDrop, onDragStart }) {
       <h2>{title}</h2>
       <ul>
         {cards.map(card => (
-          <ProjectCard
+          <li
             key={card.id}
-            id={card.id}
-            text={card.name} 
+            className="project-card"
+            draggable="true"
             onDragStart={(e) => onDragStart(e, card.id)}
-          />
+            onDoubleClick={() => onDoubleClickOnTask(card)} 
+          >
+            {card.name}
+          </li>
         ))}
       </ul>
     </div>
   );
 }
-
 export default ProjectColumn;
