@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import ProjectColumn from './ProjectColumn';
+import TaskAssignPanel from './TaskAssignPanel';
 import Buttons from './Buttons';
 import { UserContext } from './UserContext';
 import './styles/App.css';
@@ -10,10 +11,12 @@ const Kanban = () => {
   const [selectedProjectId, setSelectedProjectId] = useState('');
   const [cards, setCards] = useState([]);
   const [newTask, setNewTask] = useState('');
+  const [projectMembers, setProjectMembers] = useState([]);
+  const [showAssignPanel, setShowAssignPanel] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
   const { user } = useContext(UserContext);
 
   useEffect(() => {
-    // Proje bilgilerini yükle
     if (user && user.id) {
       axios.get(`http://localhost:8080/api/v1/projects/user/${user.id}/projects`)
         .then(response => {
@@ -25,8 +28,7 @@ const Kanban = () => {
     }
   }, [user]);
 
-  /*useEffect(() => {
-    // Seçili projeye ait task'ları yükle
+  useEffect(() => {
     if (selectedProjectId) {
       axios.get(`http://localhost:8080/api/v1/tasks/project/${selectedProjectId}`)
         .then(response => {
@@ -35,8 +37,20 @@ const Kanban = () => {
         .catch(error => {
           console.error("Error loading tasks:", error);
         });
+
+      axios.get(`http://localhost:8080/api/v1/projects/${selectedProjectId}/members`)
+        .then(response => {
+          setProjectMembers(response.data);
+        })
+        .catch(error => {
+          console.error("Error loading project members:", error);
+        });
     }
-  }, [selectedProjectId]);*/
+  }, [selectedProjectId]);
+
+  const handleProjectChange = (e) => {
+    setSelectedProjectId(e.target.value);
+  };
 
   const addTask = async () => {
     if (!newTask.trim()) {
@@ -46,35 +60,20 @@ const Kanban = () => {
   
     const taskData = {
       name: newTask,
-      status: "TO DO",
+      status: "TO_DO",
       projectId: selectedProjectId
     };
   
     try {
-      const response = await axios.post('http://localhost:8080/api/v1/tasks/createTask', taskData, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      handleAddTask();
+      const response = await axios.post(`http://localhost:8080/api/v1/tasks`, taskData);
       setCards([...cards, response.data]);
       setNewTask('');
     } catch (error) {
       console.error("Error adding task:", error);
     }
   };
-  const handleAddTask = () => {
-    if (newTask.trim() !== '') {
-      const newCard = {
-        id: `card-${cards.length + 1}`,
-        text: newTask,
-        column: 'TO DO',
-      };
-      setCards([...cards, newCard]);
-      setNewTask('');
-    }
-  };
-  
+
+
   const onDragStart = (e, id) => {
     e.dataTransfer.setData('id', id);
   };
@@ -88,31 +87,42 @@ const Kanban = () => {
     let updatedCard;
     const newCards = cards.map(card => {
       if (card.id === id) {
-        card.status = newStatus;
-        updatedCard = card;
+        updatedCard = { ...card, status: newStatus };
+        return updatedCard;
       }
       return card;
     });
-   
-  
 
     if (updatedCard) {
       try {
-        await axios.post(`http://localhost:8080/api/v1/tasks/updateStatus`, {
-          id: updatedCard.id,
-          status: newStatus
-        });
+        await axios.patch(`http://localhost:8080/api/v1/tasks/${id}/status`, { status: newStatus });
         setCards(newCards);
       } catch (error) {
         console.error("Error updating task status:", error);
       }
     }
   };
+
+  const openAssignPanel = (task) => {
+    setSelectedTask(task);
+    setShowAssignPanel(true);
+  };
+
+  const assignTaskToUser = async (taskId, userId) => {
+    try {
+      await axios.patch(`http://localhost:8080/api/v1/tasks/${taskId}/assign`, { userId });
+      setCards(cards.map(card => card.id === taskId ? { ...card, assignedUserId: userId } : card));
+      setShowAssignPanel(false);
+    } catch (error) {
+      console.error("Error assigning task:", error);
+    }
+  };
+
   return (
     <div className="kanban-board">
       <div className="project-dropdown">
         <label htmlFor="project-select">Choose a project:</label>
-        <select id="project-select" onChange={(e) => setSelectedProjectId(e.target.value)}>
+        <select id="project-select" onChange={handleProjectChange}>
           <option value="">Select a project</option>
           {projects.map((project) => (
             <option key={project.id} value={project.id}>
@@ -122,19 +132,16 @@ const Kanban = () => {
         </select>
       </div>
 
-      <div className="hello">
-        {user && user.name && <h1> Hello, {user.name}! </h1>}
-      </div>
-
       <div className="project-container">
-        {['TO DO', 'IN PROGRESS', 'DONE'].map((column) => (
+        {['TO DO', 'IN PROGRESS', 'DONE'].map((status) => (
           <ProjectColumn
-            key={column}
-            title={column}
-            cards={cards.filter((card) => card.column === column)}
+            key={status}
+            title={status}
+            cards={cards.filter((card) => card.status === status)}
             onDragOver={onDragOver}
-            onDrop={(e) => onDrop(e, column)}
+            onDrop={(e) => onDrop(e, status)}
             onDragStart={onDragStart}
+            onCardClick={openAssignPanel}
           />
         ))}
 
@@ -148,6 +155,14 @@ const Kanban = () => {
           <button onClick={addTask}>Add Task</button>
         </div>
       </div>
+
+      {showAssignPanel && selectedTask && (
+        <TaskAssignPanel
+          task={selectedTask}
+          projectMembers={projectMembers}
+          onAssign={assignTaskToUser}
+        />
+      )}
 
       <Buttons />
     </div>
