@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {useState } from "react";
-
+import { useNavigate } from 'react-router-dom';
 function Register()
 {
   const [id, setId] = useState('');
@@ -10,39 +10,28 @@ function Register()
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const navigate = useNavigate();
 
-    async function save(event)
-    {
-        event.preventDefault();
-    try
-        {
-         await axios.post("http://localhost:8080/api/v1/users/save",
-        {
-
-            name: name,
-            surname: surname,
-            email: email,
-            username: username,
-            password: password,
-
-
-        });
-          alert("Employee Registation Successfully");
-          setId("");
-          setName("");
-          setSurname("");
-          setEmail("");
-          setUsername("");
-          setPassword("");
-          setConfirmPassword("");
-
-        
-        }
-    catch(err)
-        {
-          alert("User Registation Failed");
-        }
-   }
+  async function save(event) {
+    event.preventDefault();
+    if(password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+    try {
+      await axios.post("http://localhost:8080/api/v1/users/save", {
+        name: name,
+        surname: surname,
+        email: email,
+        username: username,
+        password: password,
+      });
+      alert("Registration Successful");
+      navigate('/');
+    } catch(err) {
+      alert("Registration Failed");
+    }
+  }
     return (
         <div class="container mt-4" >
         <form>

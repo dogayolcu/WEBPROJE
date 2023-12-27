@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate, Link } from 'react-router-dom'; // Link'i içe aktarın
+import { useNavigate, Link } from 'react-router-dom';
 import { UserContext } from './UserContext';
 
 function Login() {
@@ -21,7 +21,7 @@ function Login() {
       return response.json();
     })
     .then(data => {
-      setUser(data); // UserContext'teki setUser fonksiyonunu çağır
+      setUser(data); 
       navigate('/kanban');
     })
     .catch(error => {
