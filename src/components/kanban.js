@@ -66,13 +66,24 @@ const Kanban = () => {
   
     try {
       const response = await axios.post(`http://localhost:8080/api/v1/tasks`, taskData);
-      setCards([...cards, response.data]);
+  
+      // Yanıtı kontrol etmek ve doğru veriyi almak için
+      if (response.data && response.data.id && response.data.name) {
+        // Yeni task'ı mevcut task listesine ekle
+        setCards(prevCards => [...prevCards, response.data]);
+      } else {
+        // Yanıt beklenen formatta değilse, bir hata mesajı logla
+        console.error("Invalid task data received:", response.data);
+      }
+  
+      // Input alanını temizle
       setNewTask('');
     } catch (error) {
+      // Hata oluşursa konsola yaz
       console.error("Error adding task:", error);
     }
   };
-
+  
 
   const onDragStart = (e, id) => {
     e.dataTransfer.setData('id', id);
