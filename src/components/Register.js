@@ -17,7 +17,6 @@ function Register() {
   async function save(event) {
     event.preventDefault();
 
-    // Şifre doğrulama işlemi
     const validationErrors = validatePassword(password);
     if (validationErrors.length > 0) {
       setPasswordValidationErrors(validationErrors);

@@ -27,7 +27,6 @@ function ProjectList() {
                         <Link to={`/projects/${project.id}`}>
                             <h3>{project.name}</h3>
                             <p>{project.description}</p>
-                            {/* Diğer proje bilgileri */}
                         </Link>
                     </li>
                 ))}

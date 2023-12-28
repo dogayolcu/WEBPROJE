@@ -1,4 +1,4 @@
-// ProjectColumn.js
+
 function ProjectColumn({ title, cards, onDragOver, onDrop, onDragStart, onDoubleClickOnTask }) {
   return (
     <div
