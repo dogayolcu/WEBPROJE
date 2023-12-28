@@ -15,7 +15,7 @@ function ResetPassword() {
     if (location.state?.email) {
       setEmail(location.state.email);
     } else {
-      navigate('/forgot-password'); 
+      navigate('/forgot-password');
     }
   }, [location, navigate]);
 
@@ -23,6 +23,13 @@ function ResetPassword() {
     e.preventDefault();
     if (newPassword !== confirmNewPassword) {
       setMessage('New passwords do not match.');
+      return;
+    }
+
+
+    const validationErrors = validatePassword(newPassword);
+    if (validationErrors.length > 0) {
+      setMessage(validationErrors.join(' '));
       return;
     }
 
@@ -39,7 +46,36 @@ function ResetPassword() {
     }
   };
 
+  function validatePassword(password) {
+    const errors = [];
 
+    if (password.length < 8 || password.length > 20) {
+      errors.push('Password must be between 8 and 20 characters long.');
+    }
+
+    const hasUpper = /[A-Z]/.test(password);
+    const hasLower = /[a-z]/.test(password);
+    const hasDigit = /[0-9]/.test(password);
+    const hasSpecial = /[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]/.test(password);
+
+    if (!hasUpper) {
+      errors.push('Password must contain at least one uppercase letter.');
+    }
+
+    if (!hasLower) {
+      errors.push('Password must contain at least one lowercase letter.');
+    }
+
+    if (!hasDigit) {
+      errors.push('Password must contain at least one digit.');
+    }
+
+    if (!hasSpecial) {
+      errors.push('Password must contain at least one special character.');
+    }
+
+    return errors;
+  }
 
   return (
     <div className="container mt-4">
