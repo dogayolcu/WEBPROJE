@@ -5,7 +5,7 @@ import TaskAssignModal from './TaskAssignModal';
 import Buttons from './Buttons';
 import { UserContext } from './UserContext';
 import './styles/App.css';
-
+import { useNavigate } from 'react-router-dom';
 const Kanban = () => {
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState('');
@@ -15,7 +15,11 @@ const Kanban = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const { user } = useContext(UserContext);
+  const navigate = useNavigate();
 
+  const navigateToUserTasks = () => {
+    navigate('/user-tasks'); 
+  };
   useEffect(() => {
     if (user && user.id) {
       axios.get(`http://localhost:8080/api/v1/projects/user/${user.id}/projects`)
@@ -118,7 +122,7 @@ const Kanban = () => {
           {projects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}
         </select>
       </div>
-      
+
       <div className="hello">
         {user && user.name && <h1> Hello, {user.name}! </h1>}
       </div>
@@ -135,6 +139,7 @@ const Kanban = () => {
       </div>
 
       {isModalOpen && selectedTask && <TaskAssignModal task={selectedTask} projectMembers={projectMembers} onAssign={assignTaskToUser} onClose={() => setIsModalOpen(false)} />}
+      <button onClick={navigateToUserTasks}>View My Tasks</button>
       <Buttons />
     </div>
   );

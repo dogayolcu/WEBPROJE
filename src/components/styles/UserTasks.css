@@ -1,0 +1,28 @@
+
+.user-tasks {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.project-tasks {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.project-tasks h3 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.task-item {
+    list-style-type: none;
+    padding: 8px;
+    margin: 5px 0;
+    border-bottom: 1px solid #eee;
+}

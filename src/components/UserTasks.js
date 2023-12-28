@@ -1,6 +1,8 @@
+// UserTasks.js
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { UserContext } from './UserContext';
+import './styles/UserTasks.css';
 
 function UserTasks() {
     const [tasks, setTasks] = useState([]);
@@ -18,14 +20,30 @@ function UserTasks() {
         }
     }, [user]);
 
+
+
+    const tasksByProjectName = tasks.reduce((acc, task) => {
+        const projectName = task.projectName || 'Unknown Project';
+        acc[projectName] = acc[projectName] || [];
+        acc[projectName].push(task);
+        return acc;
+    }, {});
+
     return (
-        <div>
+        <div className="user-tasks">
             <h2>Your Tasks</h2>
-            <ul>
-                {tasks.map(task => (
-                    <li key={task.id}>{task.name}</li>
-                ))}
-            </ul>
+            {Object.keys(tasksByProjectName).map(projectName => (
+                <div key={projectName} className="project-tasks">
+                    <h3>{projectName}</h3>
+                    <ul>
+                        {tasksByProjectName[projectName].map(task => (
+                            <li key={task.id} className="task-item">
+                                {task.name}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            ))}
         </div>
     );
 }
