@@ -21,7 +21,7 @@ function Login() {
       return response.json();
     })
     .then(data => {
-      setUser(data); 
+      setUser(data);
       navigate('/kanban');
     })
     .catch(error => {
@@ -58,6 +58,9 @@ function Login() {
           />
         </div>
         <button type="submit">Login</button>
+        <Link to="/forgot-password" style={{ marginLeft: '10px' }}>
+          <button type="button">Forgot Password?</button>
+        </Link>
         <Link to="/register" style={{ marginLeft: '10px' }}>
           <button type="button">Create An Account</button>
         </Link>

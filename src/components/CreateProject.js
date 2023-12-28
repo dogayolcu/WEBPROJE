@@ -30,10 +30,6 @@ function CreateProjectForm() {
         axios.get(`http://localhost:8080/api/v1/users/username/${usernameToAdd}`)
             .then(response => {
                 if (response.data) {
-                    setProjectData(prevProjectData => ({
-                        ...prevProjectData, 
-                        userIds: [...(prevProjectData.userIds || []), response.data.id]
-                    }));
                     setAddedUsers(prevAddedUsers => [...prevAddedUsers, usernameToAdd]);
                     setUsernameToAdd('');
                 }
@@ -45,24 +41,44 @@ function CreateProjectForm() {
 
     const removeUserFromList = (username) => {
         setAddedUsers(addedUsers.filter(user => user !== username));
-        setProjectData(prevProjectData => ({
-            ...prevProjectData,
-            userIds: prevProjectData.userIds.filter(userId => userId !== username)
-        }));
     };
 
+
     const createProject = async () => {
+        setError('');
         try {
+            const userIds = await Promise.all(
+                addedUsers.map(username => 
+                    axios.get(`http://localhost:8080/api/v1/users/username/${username}`)
+                        .then(response => {
+                            if (response.data) {
+                                return response.data.id;
+                            } else {
+                                throw new Error('User not found');
+                            }
+                        })
+                        .catch(error => {
+                            throw new Error(`Error retrieving user ID for ${username}: ${error.message}`);
+                        })
+                )
+            );
+    
+            if (user && user.id && !userIds.includes(user.id)) {
+                userIds.push(user.id);
+            }
+    
             const projectRequestData = {
                 ...projectData,
-                userIds: [...(projectData.userIds || []), user.id]
+                userIds: userIds
             };
+    
             await axios.post("http://localhost:8080/api/v1/projects/save", projectRequestData);
             navigate('/kanban');
         } catch (error) {
-            setError("Proje oluşturulamadı. Lütfen tekrar deneyiniz.");
+            setError(`Project creation failed: ${error.message}`);
         }
     };
+
 
     const handleSubmit = (e) => {
         e.preventDefault();

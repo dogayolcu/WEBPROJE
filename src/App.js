@@ -6,6 +6,9 @@ import Kanban from './components/kanban'
 import Login from './components/Login';
 import ProjectDetails from './components/ProjectDetails';
 import Register from './components/Register';
+import ResetPassword from './components/ResetPassword';
+import ForgotPassword from './components/ForgotPassword';
+import UserTasks from './components/UserTasks';
 import { UserProvider } from './components/UserContext';
 
 function App() {
@@ -20,6 +23,9 @@ function App() {
             <Route path="/add-project-members" element={<AddProjectMember />} />
             <Route path="/project-details" element={<ProjectDetails />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/user-tasks" element={<UserTasks />} />
           </Routes>
         </Router>
       </div>
